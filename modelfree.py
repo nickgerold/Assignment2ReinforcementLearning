@@ -48,6 +48,7 @@ def modelFreeLearning(explore, discount, actionStates, utilityScore):
         successorUtility = 0
 
         #Calculating utility score using bellmans equation
+        #Goes through all utility scores and chooses the highest utility score 
         for actions in utility[nextState]:
             if utility[nextState][actions] > successorUtility:
                 successorUtility = utility[nextState][actions]
@@ -67,7 +68,7 @@ def __main__():
     #Will change to standard input, had it this way as it was easier
     file = open("assignment2test.txt", "r")
     actionStates = {}   #actionStates is the final dictionary used in the modelFreeLearning
-    for line in file:
+    for line in file:   #every slash is a next iteration of the dictionary to contain assignment2test.txt into a dictionary form for python to iterate through
         actionLocationProb = line.split("/") #get the locations, actions, probabilities from the text file
         if actionLocationProb[0] not in actionStates:
             actionStates[actionLocationProb[0]] = {} #locations
@@ -86,4 +87,5 @@ def __main__():
 
 if __name__ == '__main__':
     __main__()
+
 

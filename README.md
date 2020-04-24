@@ -4,4 +4,4 @@
   
 #  Running:
  #   python3 modelfree.py assignment2test.txt
- #   python3 ReinforcementLearning.py
+ #   python3 ReinforcementLearning.py assignment2test.txt

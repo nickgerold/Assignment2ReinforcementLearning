@@ -34,6 +34,7 @@ class Location():
             self.actionDict[action].append(dest)
             self.actionValue[action].append((destination, 0))
             
+      
     # For deciding randomly which result, returns the result
     def getRandomResult(self, givenAction):
         number = random.randint(0, 99)
@@ -116,6 +117,23 @@ class Location():
         self.previousValue = self.positionValue
         self.positionValue = highestValue
         self.bestAction = highestAction
+        return actionsAndCosts
+        
+        
+    #For printing out the values and the probability
+    def printOut(self, gamma):
+        printString = self.location
+        #for cycling through thw possible actions
+        for actionString in self.actionDict.keys():
+            substring = "/" + actionString
+            #Cycle through destinations, will find probablitlity 
+            for countPairing in self.nextLocation[actionString]:
+                destString = countPairing[0]
+                count = countPairing[1]
+                probability = count/self.actionCount
+                actionsAndCosts = self.calculateValues(gamma)
+                print(printString + substring + '/' + destString + " " + str(probability))
+        
                 
     
     # Calls itself until a path to the goal is found, method will be random or model
@@ -133,18 +151,26 @@ def modelBasedRecursive(currentLocation, method):
 # The base driver code of the model based experiment      
 def modelBased(gamma, epsilon):
     firstLocation = locationList[list(locationList.keys())[0]]
-    # For now run tiwce, once with random choices, second with suggested model
-    for i in range(int(epsilon *(2/3))):
-        modelBasedRecursive(firstLocation, "random")
-        for locationObj in locationList.values():
-            if locationObj.actionCount != 0:
-                locationObj.calculateValues(gamma)
-    for i in range(int(epsilon *(1/3))):
-        modelBasedRecursive(firstLocation, "model")
-        for locationObj in locationList.values():
-            if locationObj.actionCount != 0:
-                locationObj.calculateValues(gamma)
-    firstLocation.calculateValues(gamma)
+    modelBasedRecursive(firstLocation, "random")
+    for locationObj in locationList.values():
+        if locationObj.actionCount != 0:
+           locationObj.calculateValues(gamma)
+    count = 1
+    while count < 1001:
+        chance = random.randint(0, 99)
+        if chance < epsilon * 100:
+            modelBasedRecursive(firstLocation, "random")
+            for locationObj in locationList.values():
+                if locationObj.actionCount != 0:
+                    locationObj.calculateValues(gamma)
+        else:
+            modelBasedRecursive(firstLocation, "model")
+            for locationObj in locationList.values():
+                if locationObj.actionCount != 0:
+                    locationObj.calculateValues(gamma)
+        count += 1
+    for locationObj in locationList.values():
+        locationObj.printOut(gamma)
     
 
 #Will change to standard input, had it this way as it was easier
@@ -160,4 +186,20 @@ for line in file:
     else:
         locationList[location].addAction(action, destination, prob)
 locationBackup = copy.deepcopy(locationList)
-modelBased(0.9, 100)
+print("High gamma, low epsilon")
+modelBased(0.9, 0.1)
+print()
+locationList = locationBackup
+locationBackup = copy.deepcopy(locationList)
+print("Low gamma, low epsilon")
+modelBased(0.2,0.1)
+print()
+locationList = locationBackup
+locationBackup = copy.deepcopy(locationList)
+print("High gamma, high epsilon")
+modelBased(0.9,0.9)
+print()
+locationList = locationBackup
+locationBackup = copy.deepcopy(locationList)
+print("Low gamma, high epsilon")
+modelBased(0.2,0.9)

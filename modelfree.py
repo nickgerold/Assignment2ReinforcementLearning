@@ -54,6 +54,7 @@ def modelFreeLearning(explore, discount, actionStates, utilityScore):
                 successorUtility = utility[nextState][actions]
         utility[currentState][currentAction] = utility[currentState][currentAction] + currentReward + discount * (successorUtility)
         currentState = nextState
+        stroke = stroke + 1
 
         #Fail safe to stop while loop in case spaghetti code happens
         if currentState == "In":
